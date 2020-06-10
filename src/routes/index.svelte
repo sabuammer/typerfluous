@@ -19,10 +19,6 @@
       }
     };
   }
-
-  function handleIntroend() {
-    done = true;
-  }
 </script>
 
 <style>
@@ -32,19 +28,23 @@
     font-family: "Quicksand", sans-serif;
     font-size: 4em;
   }
+
+  :global(body), :global(main) {
+	  background: #EFF3F9 !important;
+  }
 </style>
 
 <svelte:head>
   <title>typerfluous</title>
   <link
-    href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;700&display=swap"
     rel="stylesheet" />
 </svelte:head>
 
 {#if init}
-  <h1 in:typewriter on:introend={handleIntroend}>typerfluous</h1>
+  <h1 in:typewriter on:introend={() => (done = true)}>typerfluous</h1>
 {/if}
 
 {#if done}
-    <Words />
+  <Words />
 {/if}
