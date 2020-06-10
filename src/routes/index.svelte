@@ -1,7 +1,7 @@
 <script>
   import { onMount, tick } from "svelte";
   import { onInterval } from "../utils.js";
-  import Words from "../components/Words.svelte";
+  import TypingTest from "../components/TypingTest.svelte";
 
   let init = false;
   let done = false;
@@ -46,5 +46,5 @@
 {/if}
 
 {#if done}
-  <Words />
+  <TypingTest />
 {/if}
