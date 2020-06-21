@@ -1,6 +1,5 @@
 <script>
   import { onMount, tick } from "svelte";
-  import { onInterval } from "../utils.js";
   import TypingTest from "../components/TypingTest.svelte";
 
   let init = false;
@@ -29,8 +28,9 @@
     font-size: 4em;
   }
 
-  :global(body), :global(main) {
-	  background: #EFF3F9 !important;
+  :global(body),
+  :global(main) {
+    background: #eff3f9 !important;
   }
 </style>
 
