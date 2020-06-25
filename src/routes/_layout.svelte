@@ -1,14 +1,22 @@
+<script>
+    import NavBar from "../components/NavBar.svelte";
+    import {fade} from "svelte/transition";
+    import {onMount} from "svelte";
+
+    let init = false;
+    onMount(() => (init = true));
+</script>
+
 <style>
-  main {
-    position: relative;
-    max-width: 56em;
-    background-color: white;
-    padding: 2em;
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
+    main {
+        max-width: 70%;
+        margin: 0 auto;
+    }
 </style>
 
-<main>
-  <slot />
-</main>
+{#if init}
+    <main in:fade={{ delay: 250 }}>
+        <NavBar/>
+        <slot/>
+    </main>
+{/if}
