@@ -180,10 +180,6 @@
     fire.auth().onAuthStateChanged(user => {
         if (user) {
             currentUser = user;
-            console.log({currentUser});
-
-        } else {
-            console.log("no user is currently logged in");
         }
     });
 </script>

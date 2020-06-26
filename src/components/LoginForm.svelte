@@ -42,26 +42,31 @@
         background: #9aa2ad;
         border-radius: 3px;
         padding: 10px;
-        line-height: 1.5em;
-        margin-top: 10px;
+        line-height: 1.25em;
+        margin-top: 5px;
+        border-bottom: 3px solid transparent;
+    }
+
+    input:focus {
+        border-bottom: 3px solid #333;
     }
 
     h1 {
-        margin: 0;
-        font-size: 2em;
+        margin: 0 0 5px;
+        font-size: 1.75em;
         font-weight: bold;
     }
 
     label {
-        margin-top: 25px;
-        font-size: 1.35em;
+        margin-top: 20px;
+        font-size: 1.25em;
     }
 
     button {
         background: #5a5d63;
         color: white;
-        margin-top: 50px;
-        font-size: 1.35em;
+        margin-top: 40px;
+        font-size: 1.25em;
         border-radius: 3px;
         padding: 5px;
         border: none;

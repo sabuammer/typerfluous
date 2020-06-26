@@ -4,8 +4,6 @@
     import {goto} from "@sapper/app";
     import fire from "../config/fire";
 
-    export let segment;
-
     let currentUser;
 
     fire.auth().onAuthStateChanged(user => {
@@ -86,9 +84,11 @@
     {:else}
         <div class="nav-end">
             <div class="user-profile">
-                <a href="profile">
-                    <img src={currentUser.photoURL} alt="The profile picture">
-                    <p class="user-greeting">{currentUser.email}</p>
+                <a href={`profile/${currentUser.displayName}`}>
+                    {#if currentUser.photoURL}
+                        <img src={currentUser.photoURL} alt="The profile picture">
+                    {/if}
+                    <p class="user-greeting">{currentUser.displayName}</p>
                 </a>
             </div>
             <button class="nav-item" on:click={handleLogout}>logout</button>
