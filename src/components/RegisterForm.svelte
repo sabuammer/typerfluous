@@ -1,30 +1,49 @@
 <script>
-    import {NotificationDisplay, notifier} from "@beyonk/svelte-notifications";
+    import {createForm} from "svelte-forms-lib";
+    import * as yup from "yup";
     import {digestMessage} from "../utils";
     import fire from "../config/fire";
     import Identicon from "identicon.js";
+    import {goto} from "@sapper/app";
 
-    // For the registration form
-    let username = "";
-    let email = ""
-    let password = "";
-    let confirmPassword = "";
+    const {form, errors, state, handleChange, handleSubmit} = createForm({
+        initialValues: {
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: ""
+        },
+        validationSchema: yup.object().shape({
+            username: yup
+                    .string()
+                    .min(3, "Username must be at least 3 characters")
+                    .max(30, "Username can't be more than 30 characters")
+                    .test("unique-username", "Username already taken",
+                            async function (value) {
+                                let duplicate = false;
 
-    let usernameError = "";
-    let passwordError = "";
-    let confirmPasswordError = "";
+                                await fire.database().ref(`usernames/${value}`).once("value", snapshot => {
+                                    duplicate = snapshot.exists();
+                                });
 
-    function handleRegister() {
-        if (password.length < 6) {
-            passwordError = "Password must be greater than 6 characters";
-        }
+                                return !duplicate;
+                            })
+                    .required("Username is required"),
+            email: yup
+                    .string()
+                    .email("Invalid email address")
+                    .required("Email address is required"),
+            password: yup
+                    .string()
+                    .min(6, "Password must be at least 6 characters long")
+                    .required("Password is required"),
+            confirmPassword: yup
+                    .string()
+                    .oneOf([yup.ref("password"), null], "Passwords must match")
+        }),
+        onSubmit: values => {
+            const {username, email, password} = values;
 
-        if (password !== confirmPassword) {
-            confirmPasswordError = "Passwords do not match";
-        }
-        if (passwordError || confirmPasswordError || usernameError) {
-            notifier.danger("Please fix any outstanding errors", 2000);
-        } else {
             fire
                     .auth()
                     .createUserWithEmailAndPassword(email, password)
@@ -50,37 +69,29 @@
                                         displayName: user.displayName,
                                         photoURL: url
                                     });
+
+                                    let usernamesUpdate = {};
+                                    usernamesUpdate[username] = user.uid;
+
+                                    let usersUpdate = {};
+                                    usersUpdate[`${user.uid}/username`] = username;
+
+                                    await fire.database().ref("usernames").update(usernamesUpdate);
+                                    await fire.database().ref("users").update(usersUpdate);
+
+                                    await goto("/");
                                 }
                             }
                     )
                     .catch(err => {
-                        notifier.danger(err, 3500);
+                        console.log({err});
                     });
         }
-    }
-
-    function handleInput(e) {
-        let currUsername = e.data ? username + e.data : username.slice(0, -1); // username is out of sync for some reason, so update it with e.data
-        fire.database().ref(`usernames/${currUsername}`).once("value", snapshot => {
-            if (snapshot.exists()) {
-                // username already exists
-                usernameError = "Username already exists";
-            } else {
-                usernameError = "";
-            }
-        });
-    }
-
-    //
-    // fire.auth().onAuthStateChanged(user => {
-    //     if (user) {
-    //         fire.database().ref(`/users/${user.uid}`)
-    //     }
-    // });
+    })
 </script>
 
 <style>
-    div {
+    form {
         display: flex;
         flex-direction: column;
         padding: 35px;
@@ -132,43 +143,44 @@
 </style>
 
 <NotificationDisplay/>
-<div>
+
+<form on:submit={handleSubmit}>
     <h1>Register</h1>
     <label for="username">Username</label>
     <input
             type="text"
             name="username"
             id="username"
-            on:input={handleInput}
-            bind:value={username}>
-    {#if usernameError}
-        <span class="error">{usernameError}</span>
+            bind:value={$form.username}>
+    {#if $errors.username}
+        <span class="error">{$errors.username}</span>
     {/if}
     <label for="emailRegister">Email</label>
     <input
             type="text"
             name="emailRegister"
             id="emailRegister"
-            bind:value={email}>
+            bind:value={$form.email}>
+    {#if $errors.email}
+        <span class="error">{$errors.email}</span>
+    {/if}
     <label for="passwordRegister">Password</label>
     <input
             type="password"
             name="passwordRegister"
             id="passwordRegister"
-            bind:value={password}/>
-    {#if passwordError}
-        <span class="error">{passwordError}</span>
+            bind:value={$form.password}/>
+    {#if $errors.password}
+        <span class="error">{$errors.password}</span>
     {/if}
     <label for="confirmPassword">Confirm Password</label>
     <input
             type="password"
             name="confirmPassword"
             id="confirmPassword"
-            bind:value={confirmPassword}/>
-    {#if confirmPasswordError}
-        <span class="error">{confirmPasswordError}</span>
+            bind:value={$form.confirmPassword}/>
+    {#if $errors.confirmPassword}
+        <span class="error">{$errors.confirmPassword}</span>
     {/if}
-    <button on:click={handleRegister}>
-        Register
-    </button>
-</div>
+    <button type="submit">Register</button>
+</form>

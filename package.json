@@ -20,7 +20,8 @@
     "random-words": "^1.1.1",
     "sirv": "^0.4.0",
     "svelte-forms-lib": "^1.1.0",
-    "svelte-notifications": "^0.9.9"
+    "svelte-notifications": "^0.9.9",
+    "yup": "^0.29.1"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
