@@ -44,7 +44,6 @@
   .nav-item {
     font-weight: bold;
     font-size: 1.3em;
-    margin-left: auto;
   }
 
   img {
@@ -62,11 +61,20 @@
   .nav-end {
     display: flex;
     flex-direction: column;
+    margin-left: auto;
+  }
+
+  .leaderboard-link {
+    font-weight: bold;
+    font-size: 1.3em;
+    margin: 0 auto;
+    margin-top: 11px;
   }
 </style>
 
 <nav>
   <a class="title" href="/">typerfluous</a>
+  <a class="leaderboard-link" href="leaderboard">leaderboard</a>
   {#if !$currentUser}
     <a class="nav-item" href="login">login</a>
   {:else}

@@ -25,6 +25,10 @@
   import { onMount } from "svelte";
 
   export let userProfile;
+
+  let lastFiveTests = userProfile.typing_stats.test_stats
+    ? userProfile.typing_stats.test_stats.reverse().slice(0, 5)
+    : [];
 </script>
 
 <style>
@@ -88,15 +92,34 @@
   table {
     text-align: right;
   }
+
+  button {
+    background: #5a5d63;
+    color: white;
+    font-size: 1.25em;
+    border-radius: 3px;
+    padding: 5px;
+    border: none;
+    margin-top: 15px;
+  }
+
+  em {
+    display: block;
+  }
 </style>
 
 <div in:fade class="profile">
   <div class="profile-pic">
     <img src={userProfile.photoURL} alt="The profile of the user" />
     <caption>{userProfile.username}</caption>
-    <p>
-      Aspiring software engineer that loves learning and thrives on a challenge.
-    </p>
+    <!-- {#if userProfile.profile_desc}
+      <p>{userProfile.profile_desc}</p>
+    {:else if $currentUser.username === userProfile.username}
+      <em>Add a description here for others to see!</em>
+    {/if}
+    {#if $currentUser.username === userProfile.username}
+      <button on:click={handleEditProfile}>Edit Profile</button>
+    {/if} -->
   </div>
   <div class="profile-info">
     <div class="profile-section">
@@ -125,7 +148,7 @@
         </thead>
         <tbody>
           {#if userProfile.typing_stats.test_stats}
-            {#each userProfile.typing_stats.test_stats as stat}
+            {#each lastFiveTests as stat}
               <tr>
                 <td>{Math.round(stat.wpm)}</td>
                 <td>{Math.round(stat.accuracy)}%</td>

@@ -121,6 +121,65 @@
       .database()
       .ref(`users/${$currentUser.userId}/typing_stats`)
       .set(typingStats);
+
+    await updateLeaderboardStats();
+  }
+
+  async function updateLeaderboardStats() {
+    let leaderboardData = await fire
+      .database()
+      .ref("leaderboard")
+      .once("value", snapshot => snapshot);
+    leaderboardData = leaderboardData.val();
+
+    if (leaderboardData) {
+      let foundOnLeaderboard = false;
+      let positionData = {
+        username: $currentUser.username,
+        photoURL: $currentUser.photoURL,
+        wpm: netWPM,
+        accuracy
+      };
+
+      for (let i = 0; i < leaderboardData.length; i++) {
+        if (netWPM > leaderboardData[i].wpm) {
+          foundOnLeaderboard = true;
+
+          let currPosition = leaderboardData.findIndex(
+            elem => elem.username === $currentUser.username
+          );
+
+          if (currPosition === -1) {
+            // User is not currently on the leaderboards and will be added within it
+            leaderboardData.splice(i, 0, positionData);
+          } else if (i < currPosition) {
+            // User obtained a higher position on the leaderboard but was already on it
+            leaderboardData.splice(i, 0, positionData); // Add new position
+            leaderboardData.splice(currPosition + 1, 1); // Remove old position, which has been pushed down one spot
+          }
+        }
+      }
+
+      if (!foundOnLeaderboard) {
+        // User must be added to the end of the leaderboard
+        leaderboardData.push(positionData);
+      }
+    } else {
+      // No one exists on the leaderboard yet
+      leaderboardData = [
+        {
+          username: $currentUser.username,
+          photoURL: $currentUser.photoURL,
+          wpm: netWPM,
+          accuracy
+        }
+      ];
+    }
+
+    await fire
+      .database()
+      .ref("leaderboard")
+      .set(leaderboardData);
   }
 
   function handleInput(e) {
