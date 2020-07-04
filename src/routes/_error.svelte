@@ -12,13 +12,20 @@
   }
 
   h1 {
-    font-size: 2.8em;
-    font-weight: 700;
-    margin: 0 0 0.5em 0;
+    font-size: 5em;
+    font-weight: bold;
+    margin: 20px auto;
   }
 
   p {
-    margin: 1em auto;
+    margin: 20px auto;
+    font-size: 2em;
+  }
+
+  .error {
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
   }
 
   @media (min-width: 480px) {
@@ -32,9 +39,10 @@
   <title>{status}</title>
 </svelte:head>
 
-<h1>{status}</h1>
-
-<p>{error.message}</p>
+<div class="error">
+  <h1>{status}</h1>
+  <p>{error.message}</p>
+</div>
 
 {#if dev && error.stack}
   <pre>{error.stack}</pre>

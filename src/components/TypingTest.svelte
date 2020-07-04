@@ -68,25 +68,25 @@
 
   async function handleTimedTest(e) {
     if (!typing) {
-      timerInterval = setInterval(() => {
+      timerInterval = setInterval(async () => {
         timeLimit--;
         secondsElapsed++; // Increment here so that wpm calculation works for timed test as well
+
+        if (secondsElapsed === testingTimes[selectedTimesIdx] * 60) {
+          clearInterval(timerInterval);
+          timeLimit = testingTimes[selectedTimesIdx] * 60;
+          typing = false;
+          disableTyping = true;
+
+          if ($currentUser) {
+            await updateUserStats();
+          }
+        }
       }, 1000);
       typing = true;
     }
 
     handleInput(e);
-
-    if (timeLimit === 0) {
-      clearInterval(timerInterval);
-      timeLimit = testingTimes[selectedTimesIdx] * 60;
-      typing = false;
-      disableTyping = true;
-
-      if ($currentUser) {
-        await updateUserStats();
-      }
-    }
   }
 
   async function updateUserStats() {
@@ -126,9 +126,18 @@
   }
 
   async function updateLeaderboardStats() {
+    let leaderboardLabel = wordsTest ? "words" : "timed";
+    let leaderboardSublabel = wordsTest
+      ? wordCounts[selectedCountsIdx].toString()
+      : testingTimes[selectedTimesIdx].toString();
+
+    if (leaderboardSublabel === "0.5") {
+      leaderboardSublabel = "30 secs"; // This is done because decimals can't be in the path name
+    }
+
     let leaderboardData = await fire
       .database()
-      .ref("leaderboard")
+      .ref(`leaderboard/${leaderboardLabel}/${leaderboardSublabel}`)
       .once("value", snapshot => snapshot);
     leaderboardData = leaderboardData.val();
 
@@ -178,7 +187,7 @@
 
     await fire
       .database()
-      .ref("leaderboard")
+      .ref(`leaderboard/${leaderboardLabel}/${leaderboardSublabel}`)
       .set(leaderboardData);
   }
 

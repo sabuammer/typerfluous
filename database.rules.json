@@ -1,6 +1,18 @@
 {
   "rules": {
-    ".read": "auth != null",
-    ".write": "auth != null"
+    "leaderboard": {
+      ".read": true,
+      ".write": "auth != null"
+    },
+    "users": {
+      "$uid": {
+        ".read": true,
+        ".write": "auth != null && $uid == auth.uid"
+      }
+    },
+    "usernames": {
+      ".read": true,
+      ".write": "auth != null"
+    }
   }
 }
