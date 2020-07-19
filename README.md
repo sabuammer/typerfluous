@@ -10,7 +10,7 @@ Users can create an account to save their best times. Best and average statistic
 
 <img src="/static/typerfluous-profile.png">
 
-The leaderboard lists the users with the highest wpm scores across any test on the site and provides a way for users to view the profiles of other users.
+The leaderboard lists the users with the highest wpm and accuracy given the test category and provides a way for users to view the profiles of other users.
 
 <img src="/static/typerfluous-leaderboard.png">
 
