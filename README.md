@@ -12,6 +12,6 @@ Users can create an account to save their best times. Best and average statistic
 
 The leaderboard lists the users with the highest wpm and accuracy given the test category and provides a way for users to view the profiles of other users.
 
-<img src="/static/typerfluous-leaderboard.png">
+<img src="/static/typerfluous-leaderboard-ex.png">
 
 Typerfluous was created using Sapper, an application framework power by Svelte.
